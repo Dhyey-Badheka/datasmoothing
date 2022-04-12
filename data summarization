@@ -1,0 +1,236 @@
+import java.util.*; 
+  public class Datamining_prac4 { 
+    public static Double mean(int[] arr) { 
+        Double sum = 0.0; 
+        Double ma; 
+        for (int i = 0; i < arr.length; i++) { 
+            sum = sum + arr[i]; 
+        } 
+        ma = sum / arr.length; 
+        return ma; 
+    } 
+     public static Double median(int[] arr) { 
+        Double me = 0.0; 
+        Arrays.sort(arr); 
+        if (arr.length % 2 != 0) { 
+            me = (double) (arr[((arr.length) / 2)]); 
+        } else { 
+            me = (double) ((double) (arr[(arr.length / 2) - 1] + arr[(arr.length / 2)]) / 2.0); 
+        } 
+        return me; 
+    } 
+    public static int mode(int[] arr) { 
+        int maxv = 0, maxc = 0; 
+        for (int i = 0; i < arr.length; i++) { 
+            int count = 0; 
+            for (int j = 0; j <= i; j++) { 
+                if (arr[i] == arr[j]) { 
+                    ++count; 
+                } 
+            } 
+            if (count > maxc) { 
+                maxc = count; 
+                maxv = arr[i]; 
+            } 
+        } 
+        return maxv; 
+    } 
+    public static Double standard(int[] arr) { 
+        Double std = 0.0, sum = 0.0; 
+        Double me = mean(arr); 
+        Double dev[] = new Double[arr.length]; 
+        for (int i = 0; i < arr.length; i++) { 
+            dev[i] = arr[i] - me; 
+            dev[i] *= dev[i]; 
+            sum += dev[i]; 
+        } 
+        std = sum / arr.length; 
+        std = Math.pow(std, 0.5); 
+        return std; 
+    } 
+public static void main(String[] args) { 
+        System.out.println("Enter number of element you want to find the mean , median , mode and std dev"); 
+        int n; 
+        Scanner sc = new Scanner(System.in); 
+        n = sc.nextInt(); 
+        System.out.println("Enter elements"); 
+        int[] arr = new int[n]; 
+        for (int i = 0; i < n; i++) { 
+            arr[i] = sc.nextInt(); 
+        } 
+        Double ma = mean(arr); 
+        Double me = median(arr); 
+        Double std = standard(arr); 
+        int mo = mode(arr); 
+        System.out.println("Mean is " + ma); 
+        System.out.println("Median is " + me); 
+        System.out.println("Mode is " + mo); 
+        System.out.println("Standard deviation is " + std); 
+        System.out.println("Enter size of bins"); 
+        int bin; 
+        bin = sc.nextInt(); 
+        int count = 0; 
+        if (bin < n) { 
+            while (n - bin >= 0) { 
+                count++; 
+                n = n - bin; 
+            } 
+            if (n > 0) { 
+                count++; 
+                int newarr[] = new int[arr.length + (bin - n)]; 
+                for (int i = 0; i < arr.length; i++) { 
+                    newarr[i] = arr[i]; 
+                } 
+                for (int i = arr.length; i < newarr.length; i++) { 
+                    newarr[i] = 0; 
+                } 
+ 
+ 
+                for (int i = 0; i < newarr.length; i++) { 
+                    System.out.println(newarr[i]); 
+                } 
+                System.out.println("Smoothing by\n 1)Mean \n 2)Median \n 3)Mode\n 4)Boundaries\n Enter your choice"); 
+                int c = sc.nextInt(); 
+                Double val = 0.0; 
+                Double bn[][] = new Double[count][bin]; 
+                int j = 0, p = 0; 
+                for (int i = 0; i < count; i++) { 
+                    int[] newarray = new int[bin]; 
+                    int k = 0; 
+                    for (; j < bin + p; j++) { 
+                        // System.out.println(j); 
+                        newarray[k] = newarr[j]; 
+                        k++; 
+                    } 
+                    p = j; 
+                    Double mea = mean(newarray); 
+                    Double meadi = median(newarray); 
+                    int mod = mode(newarray); 
+                    if (c == 1) { 
+                        val = mea; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } else if (c == 2) { 
+                        val = meadi; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } else if (c == 3) { 
+                        val = (double) mod; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } else if (c == 4) { 
+                        int[] newar = new int[bin]; 
+                        int[] forsort = new int[bin]; 
+                        for (int m = 0; m < bin; m++) { 
+                            newar[m] = newarray[m]; 
+                            forsort[m] = newarray[m]; 
+                        } 
+                        Arrays.sort(forsort); 
+                        for (k = 0; k < bin; k++) { 
+                            if (Math.abs(forsort[0] - newar[k]) > (Math.abs(forsort[bin - 1] - newar[k]))) { 
+                                bn[i][k] = (double) forsort[bin - 1]; 
+                            } else { 
+                                bn[i][k] = (double) forsort[0]; 
+                            } 
+                        } 
+                    } 
+                } 
+                for (int i = 0; i < count; i++) { 
+                    for (j = 0; j < bin; j++) { 
+                        System.out.print(bn[i][j] + "\t"); 
+                    } 
+                    System.out.println(); 
+                } 
+            } else { 
+                Double bn[][] = new Double[count][bin]; 
+                int j = 0, p = 0; 
+                System.out.println("Smoothing by \n1)Mean \n 2)Median \n 3)Mode\n 4)Boundaries\nEnter your choice"); 
+                int c = sc.nextInt(); 
+                Double val = 0.0; 
+                 for (int i = 0; i < count; i++) { 
+                    int[] newarray = new int[bin]; 
+                    int k = 0; 
+                    for (; j < bin + p; j++) { 
+                        newarray[k] = arr[j]; 
+                        k++; 
+                    } 
+                    p = j; 
+                    Double mea = mean(newarray); 
+                    Double meadi = median(newarray); 
+                    int mod = mode(newarray); 
+                    if (c == 1) { 
+                        val = mea; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } else if (c == 2) { 
+                        val = meadi; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } else if (c == 3) { 
+                        val = (double) mod; 
+                        for (k = 0; k < bin; k++) { 
+                            bn[i][k] = val; 
+                        } 
+                    } 
+                    for (k = 0; k < bin; k++) { 
+                        int[] newar = new int[bin]; 
+                        int[] forsort = new int[bin]; 
+                        for (j = 0; j < bin; j++) { 
+                            newar[j] = newarray[j]; 
+                            forsort[j] = newarray[j]; 
+                        } 
+                        Arrays.sort(forsort); 
+                        if (Math.abs(forsort[0] - newar[k]) > (Math.abs(forsort[bin - 1] - newar[k]))) { 
+                            bn[i][k] = (double) forsort[bin - 1]; 
+                        } else { 
+                            bn[i][k] = (double) forsort[0]; 
+                        } 
+                    } 
+                } 
+                 for (int i = 0; i < count; i++) { 
+                    for (j = 0; j < bin; j++) { 
+                        System.out.print(bn[i][j] + "\t"); 
+                    } 
+                    System.out.println(); 
+                } 
+            } 
+        } 
+    } 
+} 
+ 
+
+
+
+OUTPUT: 
+PS G:\sem6 practical> cd "g:\sem6 practical\" ; if ($?) { javac Datamining_prac4.java } ; if ($?) { java Datamining_prac4 } 
+
+Enter number of element you want to find the mean , median , mode and std dev 
+6 
+Enter elements 
+23 
+35 
+8 
+2 
+354 
+67 
+Mean is 81.5 
+Median is 29.0 
+Mode is 2 
+Standard deviation is 123.67531416306706 
+Enter size of bins 
+3 
+Smoothing by 
+1)Mean 
+2)Median 
+3)Mode 
+4)Boundaries 
+Enter your choice 
+4 
+2.0     2.0     23.0 
+35.0    35.0    354.0
+ 
